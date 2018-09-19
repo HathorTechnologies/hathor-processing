@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+
+    <appender name="stash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>${LOGSTASH_HOST:-localhost}:${LOGSTASH_PORT:-5008}</destination>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder" >
+            <customFields>{"environment":"${ENV:-UNKNOWN}", "appname":"${APPNAME:-UNKNOWN}","hostip":"${DOCKER_HOST:-UNKNOWN}", "containerId":"${DOCKER_CONTAINER_ID:-UNKNOWN}"}</customFields>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="stash" />
+        <appender-ref ref="CONSOLE" />
+    </root>
+</configuration>
