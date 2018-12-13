@@ -32,8 +32,6 @@ import java.nio.file.Files;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Sql("classpath:test-clean.sql")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -48,10 +46,8 @@ public abstract class BaseControllerTest {
     protected String stableStorage = new File(testDir, STORAGE).getAbsolutePath();
 
     protected static final int ADMIN_ID = 1;
-    protected static final int WORKER_ID = 2;
     protected static final UUID AUTH_ID = UUID.randomUUID();
     protected Cookie ADMIN_RIGHT_AUTHORIZATION_COOKIE;
-    protected Cookie WORKER_RIGHT_AUTHORIZATION_COOKIE;
     protected Header RIGHT_HEADER;
     protected Header WRONG_JWT_HEADER;
 
@@ -91,22 +87,12 @@ public abstract class BaseControllerTest {
         String adminJwtToken = jwtService.createJwtToken(
                 AuthJwtToken.builder()
                         .userId(ADMIN_ID)
-                        .userPermissions(Stream.of("docs.create", "docs.delete", "docs.get", "docs.update").collect(Collectors.toSet()))
-                        .xsrfToken(AUTH_ID.toString())
-                        .build());
-
-        String workerJwtToken = jwtService.createJwtToken(
-                AuthJwtToken.builder()
-                        .workerId(WORKER_ID)
+                        .email("test@test.com")
                         .xsrfToken(AUTH_ID.toString())
                         .build());
 
         Date expiryDate = new Date(new Date().getTime() + authProperties.getTokenExpireHours() * 3600);
         ADMIN_RIGHT_AUTHORIZATION_COOKIE = new Cookie.Builder(AuthConst.JWT_TOKEN_COOKIE, adminJwtToken)
-                .setHttpOnly(true)
-                .setExpiryDate(expiryDate)
-                .build();
-        WORKER_RIGHT_AUTHORIZATION_COOKIE = new Cookie.Builder(AuthConst.JWT_TOKEN_COOKIE, workerJwtToken)
                 .setHttpOnly(true)
                 .setExpiryDate(expiryDate)
                 .build();

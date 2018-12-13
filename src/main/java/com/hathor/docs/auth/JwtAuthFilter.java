@@ -34,7 +34,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		SecurityContextHolder.getContext().setAuthentication(new UserAuthentication(jwtService.getAuthToken(request)));
+		SecurityContextHolder.getContext().setAuthentication(new PlatformAuthentication(jwtService.getAuthToken(request)));
 		filterChain.doFilter(request, response);
 	}
 }

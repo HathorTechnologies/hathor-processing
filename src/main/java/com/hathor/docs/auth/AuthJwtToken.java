@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import ua.ardas.jwt.JwtData;
 
 import java.util.Set;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -15,21 +16,11 @@ import java.util.Set;
 public class AuthJwtToken implements JwtData {
 
     private Integer userId;
-    private Integer workerId;
-
-	private Integer companyId;
-
-	private String localeKey;
-	private String fullName;
-	private String xsrfToken;
-
-	private UserTypes userTypeKey;
-	private Set<String> userPermissions;
-	private Integer departmentId;
-	private Set<Integer> projectsIds;
-
-    @Override
-    public String getXsrfToken() {
-        return xsrfToken;
-    }
+    private UUID nodeId;
+    private String email;
+    private String fullName;
+    private Integer ownerId;
+    private String xsrfToken;
+    private String role;
+    private Set<String> permissions;
 }

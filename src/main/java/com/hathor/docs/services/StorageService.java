@@ -127,8 +127,9 @@ public class StorageService {
 
     private FileDto moveFile(UUID dataId, UUID fileId) throws IOException {
         log.info(String.format("Move files from tmp to stable storage: dataId = %s  fileIds = %s", dataId, fileId));
-        FileData file = filesRepository.findByFileIdAndDataIdIsNull(fileId)
-                .orElseThrow(() -> new EntityNotFoundException("Data file not found"));
+        FileData file = filesRepository.findByFileIdAndDataIdIsNull(fileId).orElseThrow(() ->
+                new EntityNotFoundException("Data file not found")
+        );
         storageUtilsService.fileMoveToStorage(fileId);
         file.setDataId(dataId);
         filesRepository.save(file);
