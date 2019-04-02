@@ -1,2 +1,0 @@
-INSERT INTO files (id, data_id, file_id, original_name, size_kb, mime_type, updated_time, created_time)
-VALUES (1, null, '00000000-0000-0000-0000-000000000001', 'empty-pdf.pdf', 6.500, 'application/pdf', '2018-01-26 16:25:43.102000', '2018-01-26 16:25:43.102000');

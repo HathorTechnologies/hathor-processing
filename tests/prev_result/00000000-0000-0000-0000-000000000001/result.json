@@ -1,0 +1,18 @@
+[
+  {
+    "instrument_name": "SRR000063",
+    "run_id": 18.3999996185,
+    "flowcell_id": "EJGTJSJ01AUQGP",
+    "flowcell_lane": null,
+    "tile_number": null,
+    "x_coord": null,
+    "y_coord": null,
+    "member": null,
+    "is_filtered": null,
+    "control_bit": null,
+    "barcode": null,
+    "data": "AATACCAGCCTGAGCGGGCTGGCAAGGCNNNN",
+    "quality": "@:7;A<;9B<8;;8<CA2<1A=<>:A<<!!!!",
+    "other": null
+  }
+]
