@@ -1,5 +1,4 @@
 import os
-import shutil
 import pandas
 import unittest
 from unittest.mock import patch
@@ -7,10 +6,6 @@ from hathorprocessing import read_fastq_data, save_result, read_prev_result
 
 
 class TestCommons(unittest.TestCase):
-    def setUp(self):
-        result_path = os.getcwd() + '/results'
-        if os.path.exists(result_path):
-            shutil.rmtree(result_path)
 
     def test_read_fastq(self):
         env = patch.dict('os.environ', {
@@ -30,8 +25,7 @@ class TestCommons(unittest.TestCase):
         env = patch.dict('os.environ', {
             'DB_URL': 'sqlite:////' +
                       os.path.join(os.getcwd(), 'resources', 'hathor_node.db'),
-            'RESULT_PATH': os.path.join(os.getcwd(), 'results'),
-            'TASK_ID': 'dbeef527-cdae-4f08-ad85-9d3cba114e0d'
+            'RESULT_PATH': os.path.join(os.getcwd(), 'results')
         })
 
         env.start()
@@ -39,14 +33,13 @@ class TestCommons(unittest.TestCase):
         for data in read_fastq_data(10):
             result.append(data)
         save_result(pandas.concat(result))
-        result_file = os.path.join(os.getenv('RESULT_PATH'), os.getenv('TASK_ID'), 'result.json')
+        result_file = os.path.join(os.getenv('RESULT_PATH'), 'result.json')
         self.assertTrue(os.path.exists(result_file))
         env.stop()
 
     def test_read_prev_result(self):
         env = patch.dict('os.environ', {
-            'RESULT_PATH': os.path.join(os.getcwd(), 'prev_result'),
-            'TASK_ID': '00000000-0000-0000-0000-000000000001'
+            'RESULT_PATH': os.path.join(os.getcwd(), 'prev_result')
         })
 
         env.start()

@@ -26,15 +26,12 @@ def read_fastq_data(chunksize=1000):
 
 
 def read_prev_result():
-    file = os.path.join(os.getenv('RESULT_PATH'), os.getenv('TASK_ID'), 'result.json')
+    file = os.path.join(os.getenv('RESULT_PATH'), 'result.json')
     return pandas.read_json('file://' + file, orient='records')
 
 
 def save_result(result):
     if not isinstance(result, pandas.DataFrame):
         raise ValueError('Result should be type of DataFrame')
-
-    path = os.path.join(os.getenv('RESULT_PATH'), os.getenv('TASK_ID'))
-    if not os.path.exists(path):
-        os.makedirs(path, exist_ok=True)
-    result.to_json(path + '/result.json', orient='records')
+    file = os.path.join(os.getenv('RESULT_PATH'), 'result.json')
+    result.to_json(file, orient='records')
