@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='hathor-processing',
-    version='1.0.0.dev2',
+    version='1.0.0.dev3',
     packages=['hathorprocessing'],
     url='https://github.com/HathorTechnologies/hathor-processing',
     license='',

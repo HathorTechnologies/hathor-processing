@@ -1,6 +1,8 @@
 import os
 import pandas
 import unittest
+import testing.postgresql
+from sqlalchemy import create_engine
 from unittest.mock import patch
 from hathorprocessing import read_fastq_data, save_result, read_prev_result
 
@@ -52,3 +54,12 @@ class TestCommons(unittest.TestCase):
         self.assertEqual(result['data'][0], 'AATACCAGCCTGAGCGGGCTGGCAAGGCNNNN')
         self.assertEqual(result['quality'][0], '@:7;A<;9B<8;;8<CA2<1A=<>:A<<!!!!')
         env.stop()
+
+    def test_postgres(self):
+        env = patch.dict('os.environ', {
+            'DB_URL': 'sqlite:////' +
+                      os.path.join(os.getcwd(), 'resources', 'hathor_node.db'),
+            'RESULT_PATH': os.path.join(os.getcwd(), 'results')
+        })
+        with testing.postgresql.Postgresql() as postgresql:
+            engine = create_engine(postgresql.url())

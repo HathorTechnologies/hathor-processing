@@ -22,6 +22,8 @@ columns = (
 
 def read_fastq_data(chunksize=1000):
     conn = create_engine(os.getenv('DB_URL')).connect()
+    # sql = "SELECT * FROM fastq WHERE node_id=%s" % (os.getenv('DB_NODE_ID'))
+    # return pandas.read_sql_query(sql, conn, chunksize=chunksize)
     return pandas.read_sql_table('fastq', conn, columns=columns, chunksize=chunksize)
 
 
