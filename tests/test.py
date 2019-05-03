@@ -1,13 +1,29 @@
 import os
 import pandas
 import unittest
-import testing.postgresql
 from sqlalchemy import create_engine
 from unittest.mock import patch
+
+from testcontainers.postgres import PostgresContainer
+
 from hathorprocessing import read_fastq_data, save_result, read_prev_result
 
 
 class TestCommons(unittest.TestCase):
+
+    conn_url = ''
+
+    @classmethod
+    def setUpClass(cls):
+        file = open('test.sql', 'r')
+        sql = " ".join(file.readlines())
+        postgres = PostgresContainer("postgres:9.5")
+        conn_url = postgres.get_connection_url()
+        engine = create_engine(postgres.get_connection_url())
+        conn = engine.connect()
+        engine.execute(sql)
+        conn.close()
+        file.close()
 
     def test_read_fastq(self):
         env = patch.dict('os.environ', {
@@ -57,9 +73,11 @@ class TestCommons(unittest.TestCase):
 
     def test_postgres(self):
         env = patch.dict('os.environ', {
-            'DB_URL': 'sqlite:////' +
-                      os.path.join(os.getcwd(), 'resources', 'hathor_node.db'),
-            'RESULT_PATH': os.path.join(os.getcwd(), 'results')
+            'DB_URL': conn_url,
+            'RESULT_PATH': os.path.join(os.getcwd(), 'results'),
+            'DB_NODE_ID': '00000000-0000-0000-0000-000000000001'
         })
-        with testing.postgresql.Postgresql() as postgresql:
-            engine = create_engine(postgresql.url())
+        env.start()
+        result = read_fastq_data(10)
+        self.assertIsNotNone(result)
+        env.stop()
