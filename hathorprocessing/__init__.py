@@ -2,28 +2,12 @@ import os
 import pandas
 from sqlalchemy import create_engine
 
-columns = (
-    'instrument_name',
-    'run_id',
-    'flowcell_id',
-    'flowcell_lane',
-    'tile_number',
-    'x_coord',
-    'y_coord',
-    'member',
-    'is_filtered',
-    'control_bit',
-    'barcode',
-    'data',
-    'quality',
-    'other'
-)
-
 
 def read_fastq_data(chunksize=1000):
     conn = create_engine(os.getenv('DB_URL')).connect()
     sql = "SELECT * FROM fastq WHERE node_id='%s'" % (os.getenv('DB_NODE_ID'))
     return pandas.read_sql_query(sql, conn, chunksize=chunksize)
+
 
 def read_prev_result():
     file = os.path.join(os.getenv('RESULT_PATH'), 'result.json')

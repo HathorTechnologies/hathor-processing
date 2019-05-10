@@ -15,23 +15,23 @@ class TestCommons(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        file = open('test.sql', 'r')
-        sql = " ".join(file.readlines())
         postgres = PostgresContainer("postgres:9.5")
-        conn_url = postgres.get_connection_url()
+        postgres.start()
+        cls.conn_url = postgres.get_connection_url()
         engine = create_engine(postgres.get_connection_url())
         conn = engine.connect()
+        file = open('test.sql', 'r')
+        sql = " ".join(file.readlines())
         engine.execute(sql)
         conn.close()
         file.close()
 
-    def test_read_fastq(self):
+    def test_postgres_read_fastq(self):
         env = patch.dict('os.environ', {
-            'DB_URL': 'sqlite:////' +
-                      os.path.join(os.getcwd(), 'resources', 'hathor_node.db'),
-            'RESULT_PATH': os.path.join(os.getcwd(), 'results')
+            'DB_URL': self.conn_url,
+            'RESULT_PATH': os.path.join(os.getcwd(), 'results'),
+            'DB_NODE_ID': '00000000-0000-0000-0000-000000000001'
         })
-
         env.start()
         result = read_fastq_data(10)
         self.assertIsNotNone(result)
@@ -41,9 +41,9 @@ class TestCommons(unittest.TestCase):
 
     def test_save_result(self):
         env = patch.dict('os.environ', {
-            'DB_URL': 'sqlite:////' +
-                      os.path.join(os.getcwd(), 'resources', 'hathor_node.db'),
-            'RESULT_PATH': os.path.join(os.getcwd(), 'results')
+            'DB_URL': self.conn_url,
+            'RESULT_PATH': os.path.join(os.getcwd(), 'results'),
+            'DB_NODE_ID': '00000000-0000-0000-0000-000000000001'
         })
 
         env.start()
@@ -69,15 +69,4 @@ class TestCommons(unittest.TestCase):
         self.assertEqual(result['flowcell_id'][0], 'EJGTJSJ01AUQGP')
         self.assertEqual(result['data'][0], 'AATACCAGCCTGAGCGGGCTGGCAAGGCNNNN')
         self.assertEqual(result['quality'][0], '@:7;A<;9B<8;;8<CA2<1A=<>:A<<!!!!')
-        env.stop()
-
-    def test_postgres(self):
-        env = patch.dict('os.environ', {
-            'DB_URL': conn_url,
-            'RESULT_PATH': os.path.join(os.getcwd(), 'results'),
-            'DB_NODE_ID': '00000000-0000-0000-0000-000000000001'
-        })
-        env.start()
-        result = read_fastq_data(10)
-        self.assertIsNotNone(result)
         env.stop()
