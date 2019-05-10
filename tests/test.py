@@ -11,8 +11,6 @@ from hathorprocessing import read_fastq_data, save_result, read_prev_result
 
 class TestCommons(unittest.TestCase):
 
-    conn_url = ''
-
     @classmethod
     def setUpClass(cls):
         postgres = PostgresContainer("postgres:9.5")
