@@ -23,6 +23,7 @@ class TestCommons(unittest.TestCase):
         engine.execute(sql)
         conn.close()
         file.close()
+        print('Connection url -', postgres.get_connection_url())
 
     def test_postgres_read_fastq(self):
         env = patch.dict('os.environ', {
