@@ -20,9 +20,9 @@ columns = (
 )
 
 
-def read_fastq_data(chunksize=1000):
+def read_dna_data(chunksize=1000):
     conn = create_engine(os.getenv('DB_URL')).connect()
-    return pandas.read_sql_table('fastq', conn, columns=columns, chunksize=chunksize)
+    return pandas.read_sql_table('dna', conn, columns=columns, chunksize=chunksize)
 
 
 def read_prev_result():
