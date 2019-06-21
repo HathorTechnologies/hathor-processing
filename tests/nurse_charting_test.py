@@ -2,12 +2,13 @@ import os
 import pandas
 import unittest
 from unittest.mock import patch
-from hathorprocessing import read_dna_data, save_result, read_prev_result
+from hathorprocessing import nurse_charting
+from hathorprocessing import save_result, read_prev_result
 
 
-class TestCommons(unittest.TestCase):
+class NurseCharting(unittest.TestCase):
 
-    def test_read_dna(self):
+    def test_read(self):
         env = patch.dict('os.environ', {
             'DB_URL': 'sqlite:////' +
                       os.path.join(os.getcwd(), 'resources', 'hathor_node.db'),
@@ -15,7 +16,7 @@ class TestCommons(unittest.TestCase):
         })
 
         env.start()
-        result = read_dna_data(10)
+        result = nurse_charting.read_data(10)
         self.assertIsNotNone(result)
         for data in result:
             self.assertEqual(len(data), 10)
@@ -30,7 +31,7 @@ class TestCommons(unittest.TestCase):
 
         env.start()
         result = []
-        for data in read_dna_data(10):
+        for data in nurse_charting.read_data(10):
             result.append(data)
         save_result(pandas.concat(result))
         result_file = os.path.join(os.getenv('RESULT_PATH'), 'result.json')
