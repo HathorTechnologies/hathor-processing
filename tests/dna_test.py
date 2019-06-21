@@ -6,7 +6,7 @@ from hathorprocessing import dna
 from hathorprocessing import save_result, read_prev_result
 
 
-class TestCommons(unittest.TestCase):
+class Dna(unittest.TestCase):
 
     def test_read(self):
         env = patch.dict('os.environ', {
