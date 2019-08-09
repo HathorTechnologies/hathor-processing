@@ -24,7 +24,8 @@ pipeline {
               steps {
                   slackSend (color: '#FFFF00', message: "STARTED: Job '${env.STAGE_NAME} ${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
                   sh 'python3 setup.py sdist bdist_wheel'
-                  sh 'twine -u $PYUSER -p $PYPASS upload dist/*'
+                  sh 'twine -u $PYUSER -p $PYPASS'
+                //    upload dist/*'
               }
           }
         stage('Docker') {
@@ -32,7 +33,7 @@ pipeline {
               steps {
                   slackSend (color: '#FFFF00', message: "STARTED: Job '${env.STAGE_NAME} ${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
                   sh "docker login"
-                  sh "docker build --tag hathortechnologies/processing:1.2.0.dev --tag hathortechnologies/processing:dev ."
+                //   sh "docker build --tag hathortechnologies/processing:1.2.0.dev --tag hathortechnologies/processing:dev ."
                 //   sh "docker push hathortechnologies/processing:1.2.0.dev"
                 //   sh "docker push hathortechnologies/processing:dev"
               }
