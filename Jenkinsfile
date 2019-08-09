@@ -12,7 +12,7 @@ pipeline {
                 }
             }
         }
-        stage('test') {
+        stage('PyTest') {
               agent { label 'py'}
               steps {
                   slackSend (color: '#FFFF00', message: "STARTED: Job '${env.STAGE_NAME} ${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
