@@ -16,8 +16,7 @@ pipeline {
               agent { label 'py'}
               steps {
                   slackSend (color: '#FFFF00', message: "STARTED: Job '${env.STAGE_NAME} ${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-                  sh 'cd tests'
-                  sh 'python3 -m unittest discover -s main'
+                  sh 'cd tests && python3 -m unittest discover -s main'
               }
           }
         stage('PyPi') {
