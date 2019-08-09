@@ -24,7 +24,7 @@ pipeline {
               steps {
                   slackSend (color: '#FFFF00', message: "STARTED: Job '${env.STAGE_NAME} ${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
                   sh 'python3 setup.py sdist bdist_wheel'
-                  sh 'twine -u $PYUSER -p $PYPASS upload dist/*'
+                  sh 'twine upload dist/*'
               }
           }
         stage('Docker') {
