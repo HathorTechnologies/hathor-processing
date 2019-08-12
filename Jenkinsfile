@@ -45,6 +45,7 @@ pipeline {
                     dockerImage = docker.build(repoUrl + ":${VERSION}", "-f ${dockerfilePath} .")  
                     docker.withRegistry( '', registryCredential ) {
                         dockerImage.push()
+                        dockerImage.push('latest')
                     }
                     slackSend (color: '#00FF00', message: "SUCCESS: Job '${env.STAGE_NAME} ${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")  
                 }
