@@ -2,6 +2,10 @@
 
 pipeline {
     agent none
+    environment {
+        registryCredential = 'DockerHub'
+        repoUrl = 'hathortechnologies/processing'
+    }
     stages {
         stage('init') {
             agent { label 'py'}
@@ -31,12 +35,14 @@ pipeline {
               agent { label 'py'}
               steps {
                   slackSend (color: '#FFFF00', message: "STARTED: Job '${env.STAGE_NAME} ${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-                  sh "docker login"
-                //   sh "docker build --tag hathortechnologies/processing:1.2.0.dev --tag hathortechnologies/processing:dev ."
-                //   sh "docker push hathortechnologies/processing:1.2.0.dev"
-                //   sh "docker push hathortechnologies/processing:dev"
-              }
-          }
+                  script {
+                    dockerImage = docker.build repoUrl ":1.2.1.dev"
+                    docker.withRegistry( '', registryCredential ) {
+                    dockerImage.push()
+                    }
+                }
+            }
+        }
     }
                 post {
                   success {
