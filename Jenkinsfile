@@ -39,7 +39,7 @@ pipeline {
               steps {
                   slackSend (color: '#FFFF00', message: "STARTED: Job '${env.STAGE_NAME} ${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
                   script {
-                    dockerImage = docker.build(repoUrl + ":1.2.3.dev", "-f ${dockerfilePath} .")  
+                    dockerImage = docker.build(repoUrl + ":1.2.4.dev", "-f ${dockerfilePath} .")  
                     docker.withRegistry( '', registryCredential ) {
                         dockerImage.push()
                     }
