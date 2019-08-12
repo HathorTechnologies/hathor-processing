@@ -2,42 +2,58 @@
 
 pipeline {
     agent none
+    environment {
+        registryCredential = 'DockerHub'
+        repoUrl = 'hathortechnologies/processing'
+        dockerfilePath = './docker/Dockerfile'
+    }
     stages {
         stage('init') {
-            agent { label 'ecs'}
+            agent { label 'py'}
             steps {
                 script {
-                    gitCommitHash = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
-                    shortCommitHash = gitCommitHash.take(7)
-                    env.VERSION = shortCommitHash
+                    def scmVars = checkout scm
+                    env.MY_GIT_PREVIOUS_SUCCESSFUL_COMMIT = scmVars.GIT_PREVIOUS_SUCCESSFUL_COMMIT
                 }
             }
         }
-        stage('test') {
-              agent { label 'ecs'}
+        stage('PyTest') {
+              agent { label 'py'}
               steps {
                   slackSend (color: '#FFFF00', message: "STARTED: Job '${env.STAGE_NAME} ${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-                  sh 'python3 tests/__main__.py'
-              }
-          }
+                  sh 'cd tests && python3 -m unittest discover -s main'
+                  slackSend (color: '#00FF00', message: "SUCCESS: Job '${env.STAGE_NAME} ${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")  
+            }
+        }
         stage('PyPi') {
-              agent { label 'ecs'}
+              agent { label 'py'}
               steps {
                   slackSend (color: '#FFFF00', message: "STARTED: Job '${env.STAGE_NAME} ${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-              }
-          }
+                  sh 'python3 setup.py sdist bdist_wheel'
+                  sh 'twine upload dist/*'
+                  slackSend (color: '#00FF00', message: "SUCCESS: Job '${env.STAGE_NAME} ${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")  
+            }
+        }
         stage('Docker') {
-              agent { label 'ecs'}
+              agent { label 'py'}
               steps {
                   slackSend (color: '#FFFF00', message: "STARTED: Job '${env.STAGE_NAME} ${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-                  sh("eval \$(aws ecr get-login --no-include-email --region $REGION)")
-              }
-          }
+                  script {
+                    dockerImage = docker.build(repoUrl + ":1.2.4.dev", "-f ${dockerfilePath} .")  
+                    docker.withRegistry( '', registryCredential ) {
+                        dockerImage.push()
+                    }
+                    slackSend (color: '#00FF00', message: "SUCCESS: Job '${env.STAGE_NAME} ${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")  
+                }
+            }
+        }
     }
                 post {
                   success {
-                    slackSend (color: '#00FF00', message: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")  }
-                  failure {
-                    slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")  }
+                    slackSend (color: '#00FF00', message: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")  
                 }
+                  failure {
+                    slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})") 
+                }
+        }
 }
