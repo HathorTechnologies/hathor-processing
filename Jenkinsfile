@@ -38,7 +38,7 @@ pipeline {
                   script {
                     dockerImage = docker.build repoUrl ":1.2.1.dev"
                     docker.withRegistry( '', registryCredential ) {
-                    dockerImage.push()
+                        dockerImage.push()
                     }
                 }
             }
