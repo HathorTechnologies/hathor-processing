@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-
-python setup.py sdist bdist_wheel
-# need credentials -u -p
-twine upload dist/*
+git checkout master
+git pull
+bumpversion patch
+python setup.py sdist bdist_wheel upload
+bumpversion --no-tag patch
+git push origin master --tags
