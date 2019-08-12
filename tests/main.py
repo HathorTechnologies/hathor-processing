@@ -1,4 +1,7 @@
+import sys
 import unittest
+
+sys.path.append("..")
 
 testmodules = [
     'allergies_test',
