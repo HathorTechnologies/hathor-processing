@@ -15,7 +15,7 @@ pipeline {
                     def scmVars = checkout scm
                     env.MY_GIT_PREVIOUS_SUCCESSFUL_COMMIT = scmVars.GIT_PREVIOUS_SUCCESSFUL_COMMIT
                     
-                    pyVersion = sh(returnStdout: true, script: 'cat .bumpversion.cfg | grep current_version | awk {\'printf $3\'} | head -1')
+                    pyVersion = sh(returnStdout: true, script: 'cat .bumpversion.cfg | grep current_version | awk awk NR==1{\'printf $3\'} | head -1')
                     env.VERSION = pyVersion 
                 }
             }
