@@ -1,4 +1,5 @@
 import sys
+sys.path.append("..")
 import unittest
 
 sys.path.append("..")
