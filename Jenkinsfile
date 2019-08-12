@@ -38,8 +38,6 @@ pipeline {
               agent { label 'py'}
               steps {
                   slackSend (color: '#FFFF00', message: "STARTED: Job '${env.STAGE_NAME} ${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-                  sh "nohup dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2&"
-                  sh "sleep 15 && sh -c until docker info; do echo .; sleep 1; done"
                   script {
                     dockerImage = docker.build(repoUrl + ":1.2.3.dev", "-f ${dockerfilePath} .")  
                     docker.withRegistry( '', registryCredential ) {
