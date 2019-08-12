@@ -2,6 +2,8 @@ import sys
 sys.path.append("..")
 import unittest
 
+sys.path.append("..")
+
 testmodules = [
     'allergies_test',
     'apache_aps_test',
