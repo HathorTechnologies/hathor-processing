@@ -12,5 +12,5 @@ docker run -it --rm --name my-running-script \
 -e RESULT_PATH=/result \
 -e TASK_ID=00000000-0000-0000-0000-000000000001 \
 -e DB_URL=sqlite:////db/hathor_node.db \
-hathor/processing \
+hathortechnologies/processing:dev \
 python test.py
