@@ -33,7 +33,7 @@ pipeline {
               steps {
                   slackSend (color: '#FFFF00', message: "STARTED: Job '${env.STAGE_NAME} ${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
                   sh 'python3 setup.py sdist bdist_wheel'
-                  sh 'twine upload dist/*'
+                  sh 'twine upload dist/* --skip-existing'
                   slackSend (color: '#00FF00', message: "SUCCESS: Job '${env.STAGE_NAME} ${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")  
             }
         }
